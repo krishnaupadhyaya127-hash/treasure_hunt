@@ -28,17 +28,27 @@ app.add_middleware(
 
 @app.middleware("http")
 async def vercel_path_normalizer(request: Request, call_next):
-    matched = request.headers.get("x-matched-path") or request.headers.get("x-now-route-matches")
-    if matched:
-        clean_path = matched.split("?")[0]
-        request.scope["path"] = clean_path
+    import urllib.parse
+    raw_qs = request.scope.get("query_string", b"").decode("utf-8", errors="ignore")
+    params = urllib.parse.parse_qs(raw_qs)
+    path_param = params.get("__path", [None])[0]
+
+    if path_param:
+        request.scope["path"] = f"/api/{path_param}" if not path_param.startswith("api/") else f"/{path_param}"
+        # Clean __path from query_string
+        filtered = {k: v for k, v in params.items() if k != "__path"}
+        request.scope["query_string"] = urllib.parse.urlencode(filtered, doseq=True).encode("utf-8")
     else:
-        path = request.scope.get("path", "")
-        if path == "/api/index.py" or path == "/api/index":
-            request.scope["path"] = "/"
-        elif path.startswith("/api/index.py/"):
-            sub = path[len("/api/index.py"):]
-            request.scope["path"] = sub if sub.startswith("/api") else f"/api{sub}"
+        matched = request.headers.get("x-matched-path") or request.headers.get("x-now-route-matches")
+        if matched and matched.startswith("/api/"):
+            request.scope["path"] = matched.split("?")[0]
+        else:
+            path = request.scope.get("path", "")
+            if path == "/api/index.py" or path == "/api/index":
+                request.scope["path"] = "/"
+            elif path.startswith("/api/index.py/"):
+                sub = path[len("/api/index.py"):]
+                request.scope["path"] = sub if sub.startswith("/api") else f"/api{sub}"
     return await call_next(request)
 
 if os.environ.get("VERCEL"):

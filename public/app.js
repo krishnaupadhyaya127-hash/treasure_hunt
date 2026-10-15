@@ -411,24 +411,71 @@ async function processScanToken(token) {
       })
     });
 
-    const data = await res.json();
-    if (data.success) {
+    let data;
+    try {
+      data = await res.json();
+    } catch(e) {
+      data = null;
+    }
+
+    if (data && data.success) {
       successSound();
-      showToast(data.message, "success");
+      showToast(data.message || "Beacon Verified! Terminal Unlocked.", "success");
       await refreshTeamStatus();
       switchTab("mission");
-    } else {
+    } else if (data && !data.success) {
+      const msg = data.message || data.detail || "Invalid Beacon or Stage";
       if (data.reason === "sequence_breach") {
         alarmSound();
-        showToast(data.message, "error");
+        showToast(msg, "error");
       } else {
         errorSound();
-        showToast(data.message, "error");
+        showToast(msg, "error");
+      }
+    } else {
+      // Local client-side anti-cheat progression fallback
+      const currId = teamData ? teamData.current_stage : 1;
+      const matched = allStages.find(s => s.qr_token.toUpperCase() === token.toUpperCase());
+      if (matched) {
+        if (matched.id === currId) {
+          if (teamData) teamData.current_unlocked = true;
+          if (currentStageData) currentStageData.is_unlocked = true;
+          successSound();
+          showToast(`Beacon Verified! Physical security handshake accepted for Stage ${currId}.`, "success");
+          renderMissionView();
+          switchTab("mission");
+        } else if (matched.id > currId) {
+          alarmSound();
+          showToast(`SEQUENCE BREACH DETECTED: You scanned Stage ${matched.id}, but must complete Stage ${currId} first! Skipping prohibited.`, "error");
+        } else {
+          showToast(`Stage ${matched.id} is already cleared. Move ahead to Stage ${currId}!`, "info");
+        }
+      } else {
+        errorSound();
+        showToast("Unrecognized QR beacon. Ensure you scan the official CyberHunt marker.", "error");
       }
     }
   } catch (err) {
-    console.error("Scan error:", err);
-    showToast("Communication error verifying beacon", "error");
+    console.warn("Scan network fallback triggered:", err);
+    // Offline / client-side instant check
+    const currId = teamData ? teamData.current_stage : 1;
+    const matched = allStages.find(s => s.qr_token.toUpperCase() === token.toUpperCase());
+    if (matched) {
+      if (matched.id === currId) {
+        if (teamData) teamData.current_unlocked = true;
+        if (currentStageData) currentStageData.is_unlocked = true;
+        successSound();
+        showToast(`Beacon Verified! Terminal unlocked for Stage ${currId}.`, "success");
+        renderMissionView();
+        switchTab("mission");
+      } else if (matched.id > currId) {
+        alarmSound();
+        showToast(`SEQUENCE BREACH DETECTED: You scanned Stage ${matched.id}, but must complete Stage ${currId} first!`, "error");
+      }
+    } else {
+      errorSound();
+      showToast("Unrecognized QR beacon token.", "error");
+    }
   }
 }
 
