@@ -1,0 +1,198 @@
+{
+  "stages": [
+    {
+      "id": 1,
+      "title": "Stage 1: The Cryptic Foyer",
+      "location": "ISE Dept Main Foyer / Notice Board",
+      "clue": "Where announcements gather and campus voices echo on corkboards. Find the glowing emblem near the department crest.",
+      "qr_token": "HUNT-STG1-ALPHA-9281",
+      "puzzle_type": "cipher",
+      "puzzle_title": "Caesar Decryption Protocol",
+      "story": "You've accessed the perimeter terminal. The transmission is scrambled using a Caesar-3 shift cipher.",
+      "question": "Decrypt the intercepted broadcast token: 'VHFXUH_FRGH' (Shifted forward by 3 in alphabet)",
+      "accepted_answers": [
+        "SECURE_CODE",
+        "SECURE CODE"
+      ],
+      "hints": [
+        "Shift each letter back by 3 positions in the alphabet (V -> S, H -> E...)",
+        "The first word is SECURE and the second is CODE separated by an underscore"
+      ],
+      "points": 100
+    },
+    {
+      "id": 2,
+      "title": "Stage 2: The Silicon Vault",
+      "location": "Microprocessor & Embedded Systems Lab",
+      "clue": "Follow the scent of solder and quartz crystals humming at 5MHz. The next node is anchored near Station 08.",
+      "qr_token": "HUNT-STG2-BETA-4193",
+      "puzzle_type": "binary_circuit",
+      "puzzle_title": "Logic Gate Checksum",
+      "story": "The security door requires a hexadecimal checksum calculated from an 8-bit bus line.",
+      "question": "Calculate the hex sum: Convert binary '11011010' to Hex (0xDA), then add '0x15'. What is the resulting 2-character Hex checksum?",
+      "accepted_answers": [
+        "EF",
+        "0xEF",
+        "ef"
+      ],
+      "hints": [
+        "11011010 in hex is DA. In decimal: 218.",
+        "218 + 21 (0x15) = 239 in decimal. Convert 239 to hex: 14*16 + 15 = EF."
+      ],
+      "points": 150
+    },
+    {
+      "id": 3,
+      "title": "Stage 3: The Fiber Junction",
+      "location": "Network Server Room Stairwell (Level 2)",
+      "clue": "Yellow fiber optics bridge the digital backbone. Look on the riser of step 14 where packets flow.",
+      "qr_token": "HUNT-STG3-GAMMA-7320",
+      "puzzle_type": "morse_riddle",
+      "puzzle_title": "Signal Frequency Intercept",
+      "story": "An emergency telemetry broadcast is pulsing on frequency 144.800 MHz in Morse code.",
+      "question": "Decode this Morse pulse: '... --- ...   -.-. .- ..-. .' (Translate the letters into English word/phrase)",
+      "accepted_answers": [
+        "SOS CAFE",
+        "SOSCAFE",
+        "SOS-CAFE"
+      ],
+      "hints": [
+        "... is S, --- is O, ... is S.",
+        "-.-. is C, .- is A, ..-. is F, . is E."
+      ],
+      "points": 200
+    },
+    {
+      "id": 4,
+      "title": "Stage 4: The Quantum Archives",
+      "location": "Central Library Digital Resource Zone",
+      "clue": "Where silicon records meet quiet thinkers. Locate the catalog terminal terminal rack labeled Rack-C.",
+      "qr_token": "HUNT-STG4-DELTA-8814",
+      "puzzle_type": "algorithm",
+      "puzzle_title": "Algorithm Root Solver",
+      "story": "The matrix quantum key requires the smaller root of the quadratic synchronization polynomial.",
+      "question": "Solve the quadratic security key: x^2 - 14x + 45 = 0. Submit the SMALLER root value as a single number.",
+      "accepted_answers": [
+        "5",
+        "five"
+      ],
+      "hints": [
+        "Factor the equation: (x - 5)(x - 9) = 0",
+        "The roots are 5 and 9. The smaller root is 5."
+      ],
+      "points": 250
+    },
+    {
+      "id": 5,
+      "title": "Stage 5: The Grand Nexus Podium",
+      "location": "Main Auditorium / Hackathon Presentation Stage",
+      "clue": "Where final champions are crowned and presentations come alive. Inspect the hidden marker on the master podium.",
+      "qr_token": "HUNT-STG5-OMEGA-9999",
+      "puzzle_type": "master_vault",
+      "puzzle_title": "Master Override Key",
+      "story": "You've arrived at the final vault terminal. To claim ultimate victory, synthesize the Master Master Token.",
+      "question": "Master synthesis formula: First letter of Stage 1 answer ('S') + First letter of Stage 2 answer ('E') + First letter of Stage 3 ('S') + Stage 4 root ('5') + the word 'VICTORY'. Combine without spaces:",
+      "accepted_answers": [
+        "SES5VICTORY",
+        "ses5victory"
+      ],
+      "hints": [
+        "Letter 1: S (from SECURE_CODE). Letter 2: E (from EF).",
+        "Letter 3: S (from SOS CAFE). Number: 5. Suffix: VICTORY."
+      ],
+      "points": 350
+    }
+  ],
+  "teams": {
+    "Team ByteCrafters": {
+      "name": "Team ByteCrafters",
+      "members": "Aditya & Neha",
+      "current_stage": 4,
+      "completed_stages": [
+        1,
+        2,
+        3
+      ],
+      "score": 420,
+      "hints_used": 1,
+      "start_time": 1792042201.2713287,
+      "last_scan_time": 1792043831.2713287,
+      "status": "In Progress",
+      "attempts": 4
+    },
+    "NullPointers": {
+      "name": "NullPointers",
+      "members": "Vikram & Rohan",
+      "current_stage": 3,
+      "completed_stages": [
+        1,
+        2
+      ],
+      "score": 230,
+      "hints_used": 2,
+      "start_time": 1792041751.2713287,
+      "last_scan_time": 1792043301.2713287,
+      "status": "In Progress",
+      "attempts": 5
+    },
+    "TestSquad": {
+      "name": "TestSquad",
+      "members": "Alice & Bob",
+      "current_stage": 2,
+      "completed_stages": [
+        1
+      ],
+      "current_unlocked": false,
+      "score": 100,
+      "hints_used": 0,
+      "start_time": 1792044195.9642763,
+      "last_scan_time": 1792044195.9742692,
+      "status": "Ready",
+      "attempts": 2,
+      "unlocked_hints": {}
+    },
+    "Team CyberX": {
+      "name": "Team CyberX",
+      "members": "Operatives",
+      "current_stage": 1,
+      "completed_stages": [],
+      "current_unlocked": false,
+      "score": 0,
+      "hints_used": 0,
+      "start_time": 1792044463.2944403,
+      "last_scan_time": 1792044463.2944403,
+      "status": "Ready",
+      "attempts": 0,
+      "unlocked_hints": {}
+    }
+  },
+  "logs": [
+    {
+      "time": "11:33:15",
+      "event": "Team 'TestSquad' registered for the hunt."
+    },
+    {
+      "time": "11:33:15",
+      "event": "CRITICAL: Team 'TestSquad' attempted SEQUENCE VIOLATION (Jumped to Stage 3)!"
+    },
+    {
+      "time": "11:33:15",
+      "event": "Team 'TestSquad' unlocked terminal for Stage 1."
+    },
+    {
+      "time": "11:33:15",
+      "event": "Team 'TestSquad' failed answer attempt for Stage 1 ('WRONG'). (-10 pts)"
+    },
+    {
+      "time": "11:33:15",
+      "event": "Team 'TestSquad' solved Stage 1! Advanced to Stage 2."
+    },
+    {
+      "time": "11:37:43",
+      "event": "Team 'Team CyberX' registered for the hunt."
+    }
+  ],
+  "broadcast": "Welcome to CyberHunt 2026! Scan your first QR code at Stage 1.",
+  "is_hunt_active": true,
+  "organizer_pin": "admin123"
+}
