@@ -86,7 +86,23 @@
         </div>
       </div>
 
-      <!-- Main Admin Grid -->
+      <!-- Official Station QR Codes Showcase for Judges -->
+      <div class="card" style="margin-bottom: 24px; border-color: rgba(0, 242, 254, 0.4); box-shadow: 0 0 25px rgba(0, 242, 254, 0.15);">
+        <div class="card-header">
+          <div>
+            <span class="stage-badge" style="background: rgba(0, 242, 254, 0.15); color: var(--accent-cyan); border-color: var(--accent-cyan);">PHYSICAL CHECKPOINTS</span>
+            <h2 class="card-title" style="margin-top: 6px; font-size: 1.25rem;">📡 Official Station QR Codes (Ready to Scan)</h2>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="window.print()">Print Official Posters</button>
+        </div>
+        <p style="font-size: 0.82rem; color: #cbd5e1; margin-bottom: 16px;">
+          These are the 5 official physical beacons placed across the RYMEC campus. <b>Judges can point their smartphone cameras directly at these codes on this screen to test the live hunt!</b>
+        </p>
+        <div class="qr-print-grid" id="mainQrShowcaseGrid">
+          <!-- Dynamically populated 5 scannable QR cards -->
+        </div>
+      </div>
+
       <div class="admin-grid">
 
         <!-- Column 1: Live Teams & Audit Logs -->
@@ -264,6 +280,26 @@
           `;
           stagesBox.appendChild(card);
         });
+
+        // Render Prominent QR Badges Showcase Grid
+        const qrGrid = document.getElementById("mainQrShowcaseGrid");
+        if (qrGrid && qrGrid.children.length === 0) {
+          data.stages.forEach(st => {
+            const qrCard = document.createElement("div");
+            qrCard.className = "qr-station-card";
+            qrCard.style = "background: #ffffff; color: #0f172a; border-radius: 12px; padding: 16px; text-align: center; box-shadow: 0 8px 24px rgba(0,0,0,0.4);";
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(st.qr_token)}`;
+            qrCard.innerHTML = `
+              <div style="font-size: 0.72rem; font-family: var(--font-mono); font-weight: 700; color: #0284c7; text-transform: uppercase;">STAGE ${st.id} PHYSICAL BEACON</div>
+              <h4 style="font-size: 1rem; color: #0f172a; margin: 4px 0;">${st.title}</h4>
+              <div style="font-size: 0.74rem; color: #475569; margin-bottom: 10px;">📍 ${st.location}</div>
+              <img src="${qrUrl}" alt="Stage ${st.id} QR Code" style="width: 170px; height: 170px; margin: 0 auto; display: block; border: 2px solid #e2e8f0; border-radius: 8px; padding: 6px;" onerror="this.src='/api/qr/${st.id}'" />
+              <div style="margin-top: 10px; font-family: var(--font-mono); font-size: 0.75rem; background: #f1f5f9; padding: 4px 8px; border-radius: 4px; font-weight: 700; color: #0f172a;">${st.qr_token}</div>
+              <button class="btn btn-outline btn-sm" style="margin-top: 8px; width: 100%; border-color: #0284c7; color: #0284c7; font-size: 0.72rem;" onclick="navigator.clipboard.writeText('${st.qr_token}'); showToast('Copied ${st.qr_token} to clipboard!', 'success');">📋 Copy Token</button>
+            `;
+            qrGrid.appendChild(qrCard);
+          });
+        }
 
       } catch (e) {
         console.error("Dashboard error:", e);

@@ -530,7 +530,15 @@ function renderStationsMap() {
       </div>
       <h3 style="font-size: 1.05rem; margin-bottom: 6px;">Stage ${st.id}: ${st.title}</h3>
       <div style="font-size: 0.78rem; color: var(--accent-cyan); margin-bottom: 8px;">📍 ${st.location}</div>
-      <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">${st.clue}</p>
+      <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 10px;">${st.clue}</p>
+      
+      <!-- Scannable QR Code for Station -->
+      <div style="margin: 10px 0; text-align: center; background: #ffffff; border-radius: 8px; padding: 10px;">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(st.qr_token)}" alt="Stage ${st.id} QR Code" style="width: 130px; height: 130px; display: block; margin: 0 auto; border-radius: 4px;" onerror="this.src='/api/qr/${st.id}'" />
+        <div style="font-family: var(--font-mono); font-size: 0.72rem; color: #0f172a; font-weight: 700; margin-top: 6px;">${st.qr_token}</div>
+      </div>
+
+      <button class="btn btn-outline btn-sm btn-block" style="margin-top: 6px;" onclick="simulateScan('${st.qr_token}')">⚡ Simulate Scan at Station</button>
     `;
     container.appendChild(card);
   });
