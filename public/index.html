@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CYBERHUNT // RYMEC INFOTSAV 2K26 — Digital Treasure Hunt Platform</title>
+  <meta name="description" content="A complete digital treasure hunt platform connecting physical campus exploration with interactive cryptographic and algorithmic challenges.">
+  <link rel="stylesheet" href="/style.css">
+  <!-- HTML5 QR Code Scanner Library via CDN -->
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+</head>
+<body>
+
+  <!-- Top Accent Beacon -->
+  <div class="top-beacon"></div>
+
+  <!-- Real-time Organizer Broadcast Ticker -->
+  <div class="broadcast-bar" id="broadcastBar">
+    <span class="broadcast-tag">HQ BROADCAST</span>
+    <span id="broadcastText">Scanning operative channels... Welcome to CyberHunt 2026!</span>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <div class="header-container">
+      <div class="brand" onclick="switchTab('mission')">
+        <div class="brand-icon">CH</div>
+        <div class="brand-info">
+          <h1>CYBERHUNT 2026</h1>
+          <p>RYMEC DEPT OF ISE • INFOTSAV</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="nav-pills">
+        <button class="nav-btn active" id="tab-mission" onclick="switchTab('mission')">
+          <span>🎯</span> Mission
+        </button>
+        <button class="nav-btn" id="tab-scanner" onclick="switchTab('scanner')">
+          <span>📷</span> QR Scanner
+        </button>
+        <button class="nav-btn" id="tab-map" onclick="switchTab('map')">
+          <span>🗺️</span> Stations
+        </button>
+        <button class="nav-btn" id="tab-leaderboard" onclick="switchTab('leaderboard')">
+          <span>🏆</span> Leaderboard
+        </button>
+        <button class="nav-btn" id="tab-testing" onclick="switchTab('testing')">
+          <span>⚡</span> Quick Test
+        </button>
+      </nav>
+
+      <div class="header-actions">
+        <div class="role-badge" id="roleBadge">OPERATIVE</div>
+        <button class="btn btn-outline btn-sm" id="btnSwitchTeam" onclick="openLoginModal()">Team Profile</button>
+        <a href="/admin" class="btn btn-outline btn-sm" style="border-color: rgba(239, 68, 68, 0.5); color: #fca5a5;">🔒 Organizer HQ</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-content">
+
+    <!-- Active Team HUD Card -->
+    <div class="team-bar">
+      <div class="team-meta">
+        <div class="team-avatar">🛡️</div>
+        <div class="team-title">
+          <h2 id="hudTeamName">Team CyberX</h2>
+          <span id="hudMembers">Operatives: Krishna & Partner</span>
+        </div>
+      </div>
+      <div class="team-stats">
+        <div class="stat-item">
+          <div class="val" id="hudScore">0</div>
+          <div class="lbl">Total Score</div>
+        </div>
+        <div class="stat-item">
+          <div class="val" id="hudStage">1 / 5</div>
+          <div class="lbl">Current Stage</div>
+        </div>
+        <div class="stat-item">
+          <div class="val" id="hudHints">0</div>
+          <div class="lbl">Hints Used</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stage Progression Meter -->
+    <div class="progress-container">
+      <div class="progress-header">
+        <h3>PHYSICAL RECONNAISSANCE PROGRESS</h3>
+        <span id="progressPercent" style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent-cyan);">0% CLEARED</span>
+      </div>
+      <div class="progress-steps" id="progressStepsContainer">
+        <div class="progress-bar-line">
+          <div class="progress-bar-fill" id="progressBarFill"></div>
+        </div>
+        <!-- 5 Steps populated via JS -->
+      </div>
+    </div>
+
+    <!-- TAB 1: ACTIVE MISSION PANEL -->
+    <section class="view-panel active" id="view-mission">
+      <div class="mission-grid">
+        <!-- Physical Location Clue Card -->
+        <div class="card">
+          <div class="card-header">
+            <span class="stage-badge" id="missionStageBadge">STAGE 1 RECON</span>
+            <span class="points-pill" id="missionPointsPill">+100 PTS</span>
+          </div>
+          <h2 class="card-title" id="missionTitle">The Cryptic Foyer</h2>
+          
+          <div class="location-box">
+            <div class="loc-title">📍 Physical Objective Location</div>
+            <div class="loc-desc" id="missionLocation">Main ISE Dept Notice Board / Cork Wall</div>
+          </div>
+
+          <div class="clue-quote" id="missionClue">
+            "Where campus voices echo on corkboards. Find the glowing emblem near the department crest."
+          </div>
+
+          <div style="margin-top: 20px;">
+            <button class="btn btn-primary btn-block" onclick="switchTab('scanner')">
+              <span>📷</span> Open QR Scanner at Location
+            </button>
+          </div>
+        </div>
+
+        <!-- Digital Terminal / Puzzle Challenge -->
+        <div class="card">
+          <div class="card-header">
+            <span class="stage-badge" style="border-color: var(--accent-purple); color: var(--accent-purple);">DIGITAL TERMINAL</span>
+            <span id="terminalStatusPill" class="role-badge" style="background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); border-color: rgba(245, 158, 11, 0.4);">AWAITING BEACON</span>
+          </div>
+
+          <!-- If Stage Locked (Player must scan QR first) -->
+          <div class="terminal-box" id="terminalBoxLocked">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <span class="red"></span><span class="yellow"></span><span class="green"></span>
+              </div>
+              <span>SECURITY HANDSHAKE REQUIRED</span>
+            </div>
+            <div class="terminal-locked">
+              <div class="terminal-locked-icon">🔒</div>
+              <h4>Terminal Locked</h4>
+              <p>You must reach the physical location and scan the location QR beacon to establish an encrypted uplink.</p>
+              <button class="btn btn-outline btn-sm" onclick="switchTab('scanner')">Scan Location QR Beacon</button>
+            </div>
+          </div>
+
+          <!-- If Stage Unlocked (Player solved scan, now solves puzzle) -->
+          <div class="terminal-box" id="terminalBoxUnlocked" style="display: none;">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <span class="green"></span><span class="green"></span><span class="green"></span>
+              </div>
+              <span id="terminalPuzzleTitle">Caesar Decryption Protocol</span>
+            </div>
+
+            <div style="margin-bottom: 12px; font-size: 0.8rem; color: var(--text-muted);" id="puzzleStory">
+              Operative uplink established. Intercepted transmission detected:
+            </div>
+
+            <div class="puzzle-question" id="puzzleQuestionText">
+              Decrypt the intercepted broadcast token: <b>'VHFXUH_FRGH'</b> (Caesar shift backwards by 3)
+            </div>
+
+            <!-- Puzzle Interactive Widget Hook (e.g. Morse sound button, Cipher wheel) -->
+            <div id="puzzleWidgetSlot"></div>
+
+            <form id="solveForm" onsubmit="handleSolveSubmit(event)">
+              <div class="form-group">
+                <label class="form-label" for="answerInput">ENTER DECRYPTION KEY / ANSWER</label>
+                <input type="text" id="answerInput" class="input-control" placeholder="e.g. SECURE_CODE" autocomplete="off" required>
+              </div>
+              <button type="submit" class="btn btn-primary btn-block" id="btnSubmitAnswer">
+                <span>⚡</span> Transmit Solution
+              </button>
+            </form>
+
+            <!-- Hint Section with Penalties -->
+            <div class="hint-accordion">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono);">NEED ASSISTANCE? (-25 PTS)</span>
+                <button class="btn btn-amber btn-sm" onclick="requestHint()">Request Hint</button>
+              </div>
+              <div id="hintsList"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: QR SCANNER HUD -->
+    <section class="view-panel" id="view-scanner">
+      <div class="card" style="max-width: 680px; margin: 0 auto;">
+        <div class="card-header">
+          <div>
+            <span class="stage-badge">OPTICAL RECON SCANNER</span>
+            <h2 class="card-title" style="margin-top: 6px;">Beacon Signal Scanner</h2>
+          </div>
+          <span class="role-badge">CAMERA FEED ACTIVE</span>
+        </div>
+
+        <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 16px;">
+          Aim your camera at the physical QR code placed at the campus station. Alternatively, enter the manual backup code if camera is unavailable.
+        </p>
+
+        <!-- HTML5 Video Camera Scanner Container -->
+        <div class="scanner-viewport">
+          <div id="reader"></div>
+          <div class="scanner-overlay">
+            <div class="scanner-reticle">
+              <div class="scanner-laser"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="scanner-status" id="scannerStatus">
+          Camera initializing... Position QR code inside reticle.
+        </div>
+
+        <!-- Manual Backup Token Input -->
+        <div style="margin-top: 24px; border-top: 1px solid var(--border-subtle); padding-top: 20px;">
+          <h4 style="font-size: 0.85rem; font-family: var(--font-mono); color: var(--accent-cyan); margin-bottom: 8px;">
+            MANUAL BEACON TOKEN OVERRIDE
+          </h4>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="manualTokenInput" class="input-control" placeholder="e.g. HUNT-STG1-ALPHA-9281">
+            <button class="btn btn-outline" onclick="submitManualToken()">Verify Beacon</button>
+          </div>
+        </div>
+
+        <!-- 1-Click Simulation Triggers for Rapid Evaluation -->
+        <div class="test-actions-box">
+          <div class="test-actions-title">
+            <span>⚡</span> HACKATHON EVALUATION SHORTCUTS (TEST ANY BEACON INSTANTLY)
+          </div>
+          <div class="pill-grid">
+            <button class="btn btn-sm btn-outline" onclick="simulateScan('HUNT-STG1-ALPHA-9281')">Stage 1 Beacon</button>
+            <button class="btn btn-sm btn-outline" onclick="simulateScan('HUNT-STG2-BETA-4193')">Stage 2 Beacon</button>
+            <button class="btn btn-sm btn-outline" onclick="simulateScan('HUNT-STG3-GAMMA-7320')">Stage 3 Beacon</button>
+            <button class="btn btn-sm btn-outline" onclick="simulateScan('HUNT-STG4-DELTA-8814')">Stage 4 Beacon</button>
+            <button class="btn btn-sm btn-outline" onclick="simulateScan('HUNT-STG5-OMEGA-9999')">Stage 5 Beacon</button>
+            <button class="btn btn-sm btn-amber" onclick="simulateScan('INVALID-TOKEN-999')">Invalid Token Test</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: STATIONS ROADMAP -->
+    <section class="view-panel" id="view-map">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <span class="stage-badge">CAMPUS EXPEDITION MAP</span>
+            <h2 class="card-title" style="margin-top: 6px;">All 5 Reconnaissance Stations</h2>
+          </div>
+        </div>
+
+        <div id="stationsListGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 16px;">
+          <!-- Dynamically populated station cards -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: LEADERBOARD -->
+    <section class="view-panel" id="view-leaderboard">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <span class="stage-badge" style="background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); border-color: rgba(245, 158, 11, 0.3);">LIVE TELEMETRY</span>
+            <h2 class="card-title" style="margin-top: 6px;">Field Leaderboard</h2>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="loadLeaderboard()">🔄 Refresh Telemetry</button>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="cyber-table">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Operative Team</th>
+                <th>Members</th>
+                <th>Stages Cleared</th>
+                <th>Score</th>
+                <th>Hints / Attempts</th>
+                <th>Elapsed</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="leaderboardBody">
+              <!-- Populated via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: ORGANIZER DASHBOARD -->
+    <section class="view-panel" id="view-admin">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <span class="stage-badge" style="background: rgba(239, 68, 68, 0.15); color: var(--accent-red); border-color: rgba(239, 68, 68, 0.3);">ORGANIZER COMMAND HQ</span>
+            <h2 class="card-title" style="margin-top: 6px;">Hunt Control & QR Station Deployment</h2>
+          </div>
+          <span class="role-badge" id="adminAuthBadge" style="color: var(--accent-red); border-color: var(--accent-red);">AUTH REQUIRED</span>
+        </div>
+
+        <!-- PIN Login for Organizer -->
+        <div id="adminPinGate" style="max-width: 400px; margin: 30px auto; text-align: center;">
+          <h3 style="font-size: 1.1rem; margin-bottom: 8px;">Enter Organizer Security PIN</h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 16px;">Default PIN: <code>admin123</code></p>
+          <div style="display: flex; gap: 8px;">
+            <input type="password" id="adminPinInput" class="input-control" placeholder="Organizer PIN" value="admin123">
+            <button class="btn btn-primary" onclick="authenticateAdmin()">Unlock HQ</button>
+          </div>
+        </div>
+
+        <!-- Organizer Tools (Hidden until PIN authenticated) -->
+        <div id="adminTools" style="display: none;">
+          <!-- Action Quick Buttons -->
+          <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 24px;">
+            <button class="btn btn-primary" onclick="openPrintModal()">
+              <span>🖨️</span> Generate Printable QR Station Badges
+            </button>
+            <button class="btn btn-amber" onclick="promptBroadcast()">
+              <span>📢</span> Broadcast Announcement to Teams
+            </button>
+            <button class="btn btn-outline" style="border-color: var(--accent-red); color: var(--accent-red);" onclick="confirmResetHunt()">
+              <span>⚠️</span> Reset Entire Game
+            </button>
+          </div>
+
+          <!-- Live Event Logs -->
+          <h3 style="font-size: 0.95rem; font-family: var(--font-mono); color: var(--accent-cyan); margin-bottom: 12px;">
+            📡 REAL-TIME AUDIT LOGS (ANTI-CHEAT & PROGRESSION)
+          </h3>
+          <div id="adminLogsBox" style="background: rgba(0,0,0,0.6); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 14px; max-height: 220px; overflow-y: auto; font-family: var(--font-mono); font-size: 0.75rem; color: #a5f3fc; line-height: 1.8;">
+            <!-- Real-time logs -->
+          </div>
+
+          <!-- Stages & Answer Key View -->
+          <h3 style="font-size: 0.95rem; font-family: var(--font-mono); color: var(--accent-cyan); margin: 24px 0 12px 0;">
+            🗝️ HUNT STAGES & BEACON TOKENS
+          </h3>
+          <div id="adminStagesView" style="display: flex; flex-direction: column; gap: 10px;">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 6: QUICK DEMO TEST SUITE (FOR JUDGES & EVALUATION) -->
+    <section class="view-panel" id="view-testing">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <span class="stage-badge" style="background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); border-color: rgba(16, 185, 129, 0.3);">EVALUATION SUITE</span>
+            <h2 class="card-title" style="margin-top: 6px;">Judge Interactive Demonstration</h2>
+          </div>
+          <span class="role-badge">RAPID TESTING MODE</span>
+        </div>
+
+        <p style="font-size: 0.88rem; color: #cbd5e1; line-height: 1.6; margin-bottom: 20px;">
+          Requirement 09 specifies: <i>"Demonstrate the complete journey, including successful answers and at least one invalid attempt."</i> Use these one-click buttons to evaluate each aspect in seconds without walking across campus!
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;">
+          <div class="location-box" style="background: rgba(15, 23, 42, 0.8);">
+            <h4 style="color: var(--accent-cyan); font-size: 0.9rem; margin-bottom: 6px;">1. Valid Flow Test</h4>
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 12px;">Scans current stage beacon & inputs correct cryptographic answer.</p>
+            <button class="btn btn-primary btn-sm btn-block" onclick="runValidStepTest()">Execute Correct Step</button>
+          </div>
+
+          <div class="location-box" style="background: rgba(15, 23, 42, 0.8); border-left-color: var(--accent-red);">
+            <h4 style="color: var(--accent-red); font-size: 0.9rem; margin-bottom: 6px;">2. Sequence Violation Test</h4>
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 12px;">Attempts to skip forward to Stage 4 while currently on Stage 1.</p>
+            <button class="btn btn-outline btn-sm btn-block" style="border-color: var(--accent-red); color: var(--accent-red);" onclick="runSequenceViolationTest()">Trigger Sequence Breach</button>
+          </div>
+
+          <div class="location-box" style="background: rgba(15, 23, 42, 0.8); border-left-color: var(--accent-amber);">
+            <h4 style="color: var(--accent-amber); font-size: 0.9rem; margin-bottom: 6px;">3. Wrong Answer Test</h4>
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 12px;">Submits invalid answer to test penalty calculation (-10 pts).</p>
+            <button class="btn btn-amber btn-sm btn-block" onclick="runWrongAnswerTest()">Submit Wrong Answer</button>
+          </div>
+
+          <div class="location-box" style="background: rgba(15, 23, 42, 0.8); border-left-color: var(--accent-purple);">
+            <h4 style="color: var(--accent-purple); font-size: 0.9rem; margin-bottom: 6px;">4. Hint Penalty Test</h4>
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 12px;">Requests an intelligence clue and tests hint deduction (-25 pts).</p>
+            <button class="btn btn-purple btn-sm btn-block" onclick="requestHint()">Request Hint</button>
+          </div>
+
+          <div class="location-box" style="background: rgba(15, 23, 42, 0.8); border-left-color: var(--accent-emerald);">
+            <h4 style="color: var(--accent-emerald); font-size: 0.9rem; margin-bottom: 6px;">5. Full Speedrun Demo</h4>
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 12px;">Walks through all 5 stages from start to final Master Vault victory!</p>
+            <button class="btn btn-primary btn-sm btn-block" onclick="runFullSpeedrunDemo()">Start Automated Speedrun</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: TEAM LOGIN / REGISTRATION -->
+  <div class="modal-backdrop" id="loginModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeLoginModal()">✕</button>
+      <div style="text-align: center; margin-bottom: 20px;">
+        <div class="brand-icon" style="margin: 0 auto 12px auto; width: 48px; height: 48px; font-size: 1.4rem;">CH</div>
+        <h3 style="font-size: 1.3rem;">Operative Team Login</h3>
+        <p style="font-size: 0.8rem; color: var(--text-muted);">Enter team name to resume session or start fresh hunt</p>
+      </div>
+      <form onsubmit="handleTeamRegister(event)">
+        <div class="form-group">
+          <label class="form-label" for="regTeamName">Team Name</label>
+          <input type="text" id="regTeamName" class="input-control" placeholder="e.g. CyberX" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="regMembers">Team Members</label>
+          <input type="text" id="regMembers" class="input-control" placeholder="e.g. Krishna & Partner">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Confirm & Enter Hunt</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: PRINTABLE QR STATION BADGES (FOR ORGANIZERS) -->
+  <div class="modal-backdrop" id="printModal">
+    <div class="modal-content" style="max-width: 800px;">
+      <button class="modal-close" onclick="closePrintModal()">✕</button>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <div>
+          <h3 style="font-size: 1.25rem;">Official Station QR Badges</h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">Print these or display them on phones/laptops at physical stations</p>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="window.print()">Print Badges Sheet</button>
+      </div>
+
+      <div class="qr-print-grid" id="qrBadgesContainer">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Alerts Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Audio Synthesizer -->
+  <script src="/audio.js"></script>
+  <!-- Main Frontend App Logic -->
+  <script src="/app.js"></script>
+</body>
+</html>

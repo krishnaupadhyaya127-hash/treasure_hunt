@@ -26,6 +26,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.middleware("http")
+async def vercel_path_normalizer(request: Request, call_next):
+    path = request.scope.get("path", "")
+    if path == "/api/index.py" or path == "/api/index":
+        request.scope["path"] = "/"
+    elif path.startswith("/api/index.py/"):
+        sub = path[len("/api/index.py"):]
+        request.scope["path"] = sub if sub.startswith("/api") else f"/api{sub}"
+    return await call_next(request)
+
 if os.environ.get("VERCEL"):
     DATA_FILE = "/tmp/gamestate.json"
 else:
