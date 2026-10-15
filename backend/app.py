@@ -28,12 +28,17 @@ app.add_middleware(
 
 @app.middleware("http")
 async def vercel_path_normalizer(request: Request, call_next):
-    path = request.scope.get("path", "")
-    if path == "/api/index.py" or path == "/api/index":
-        request.scope["path"] = "/"
-    elif path.startswith("/api/index.py/"):
-        sub = path[len("/api/index.py"):]
-        request.scope["path"] = sub if sub.startswith("/api") else f"/api{sub}"
+    matched = request.headers.get("x-matched-path") or request.headers.get("x-now-route-matches")
+    if matched:
+        clean_path = matched.split("?")[0]
+        request.scope["path"] = clean_path
+    else:
+        path = request.scope.get("path", "")
+        if path == "/api/index.py" or path == "/api/index":
+            request.scope["path"] = "/"
+        elif path.startswith("/api/index.py/"):
+            sub = path[len("/api/index.py"):]
+            request.scope["path"] = sub if sub.startswith("/api") else f"/api{sub}"
     return await call_next(request)
 
 if os.environ.get("VERCEL"):

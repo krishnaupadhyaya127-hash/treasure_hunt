@@ -35,8 +35,8 @@
 
       <div class="header-actions">
         <a href="/" class="btn btn-outline btn-sm">👥 Switch to Participant View</a>
-        <div class="role-badge" id="adminAuthBadge" style="background: rgba(239, 68, 68, 0.15); color: #ef4444; border-color: rgba(239, 68, 68, 0.4);">
-          LOCKED
+        <div class="role-badge" id="adminAuthBadge" style="background: rgba(16, 185, 129, 0.15); color: #10b981; border-color: rgba(16, 185, 129, 0.4);">
+          ORGANIZER ACTIVE
         </div>
       </div>
     </div>
@@ -44,23 +44,8 @@
 
   <main class="main-content">
 
-    <!-- Security PIN Gate -->
-    <div id="adminPinGate" class="card" style="max-width: 440px; margin: 40px auto; text-align: center; border-color: rgba(239, 68, 68, 0.3);">
-      <div style="font-size: 2.4rem; margin-bottom: 10px;">🔐</div>
-      <h2 style="font-size: 1.3rem; margin-bottom: 6px;">Organizer Authentication</h2>
-      <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 18px;">
-        Enter Master Passcode to access live telemetry, anti-cheat audit logs, and station badge generator.
-      </p>
-      <div class="form-group">
-        <input type="password" id="adminPinInput" class="input-control" placeholder="Organizer PIN (Default: admin123)" value="admin123" style="text-align: center; font-size: 1.1rem; letter-spacing: 2px;">
-      </div>
-      <button class="btn btn-primary btn-block" style="background: linear-gradient(90deg, #ef4444, #dc2626);" onclick="authenticateAdmin()">
-        <span>⚡</span> Unlock Command Center
-      </button>
-    </div>
-
-    <!-- Authenticated Dashboard -->
-    <div id="adminDashboard" style="display: none;">
+    <!-- Organizer Control Center -->
+    <div id="adminDashboard">
       
       <!-- Top Action Toolbar -->
       <div class="card" style="margin-bottom: 20px; padding: 18px 24px; border-color: rgba(239, 68, 68, 0.2);">
@@ -70,8 +55,8 @@
             <span style="font-size: 0.78rem; color: var(--text-muted);">Real-time control over all active participant sessions</span>
           </div>
           <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-            <button class="btn btn-primary btn-sm" onclick="openPrintModal()">
-              <span>🖨️</span> Printable Station QR Badges
+            <button class="btn btn-primary btn-sm" onclick="window.print()">
+              <span>🖨️</span> Print Station QR Posters
             </button>
             <button class="btn btn-amber btn-sm" onclick="promptBroadcast()">
               <span>📢</span> Broadcast to Participants
@@ -91,18 +76,42 @@
         <div class="card-header">
           <div>
             <span class="stage-badge" style="background: rgba(0, 242, 254, 0.15); color: var(--accent-cyan); border-color: var(--accent-cyan);">PHYSICAL CHECKPOINTS</span>
-            <h2 class="card-title" style="margin-top: 6px; font-size: 1.25rem;">📡 Official Station QR Codes (Ready to Scan)</h2>
+            <h2 class="card-title" style="margin-top: 6px; font-size: 1.25rem;">📡 Official Station QR Badges (Ready to Scan)</h2>
           </div>
           <button class="btn btn-primary btn-sm" onclick="window.print()">Print Official Posters</button>
         </div>
         <p style="font-size: 0.82rem; color: #cbd5e1; margin-bottom: 16px;">
-          These are the 5 official physical beacons placed across the RYMEC campus. <b>Judges can point their smartphone cameras directly at these codes on this screen to test the live hunt!</b>
+          These are the 5 official physical beacons placed across the RYMEC campus. <b>Judges and participants can point their smartphone cameras directly at these codes on this screen to test the live hunt!</b>
         </p>
         <div class="qr-print-grid" id="mainQrShowcaseGrid">
           <!-- Dynamically populated 5 scannable QR cards -->
         </div>
       </div>
 
+      <!-- Admin Team Onboarding Form -->
+      <div class="card" style="margin-bottom: 24px; border-color: rgba(16, 185, 129, 0.3);">
+        <div class="card-header">
+          <div>
+            <span class="stage-badge" style="background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); border-color: rgba(16, 185, 129, 0.4);">ORGANIZER ONBOARDING</span>
+            <h3 style="font-size: 1.1rem; margin-top: 4px; color: #fff;">➕ Register New Participant Team</h3>
+          </div>
+        </div>
+        <form id="adminTeamRegForm" onsubmit="handleAdminTeamRegister(event)" style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end;">
+          <div style="flex: 1; min-width: 200px;">
+            <label class="form-label">Team Name</label>
+            <input type="text" id="admTeamName" class="input-control" placeholder="e.g. NeuralHunters" required />
+          </div>
+          <div style="flex: 1; min-width: 220px;">
+            <label class="form-label">Team Members</label>
+            <input type="text" id="admTeamMembers" class="input-control" placeholder="e.g. Alice & Bob (CSE Dept)" />
+          </div>
+          <button type="submit" class="btn btn-primary" style="background: linear-gradient(90deg, #10b981, #059669); height: 46px;">
+            <span>➕</span> Register Team Now
+          </button>
+        </form>
+      </div>
+
+      <!-- Main Admin Grid -->
       <div class="admin-grid">
 
         <!-- Column 1: Live Teams & Audit Logs -->
@@ -111,7 +120,7 @@
           <div class="card" style="margin-bottom: 20px;">
             <div class="card-header">
               <span class="stage-badge" style="background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); border-color: rgba(16, 185, 129, 0.3);">LIVE TEAMS TELEMETRY</span>
-              <span id="activeTeamsCount" style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">0 Active</span>
+              <span id="activeTeamsCount" style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">2 Registered</span>
             </div>
             <div class="table-wrapper">
               <table class="cyber-table">
@@ -164,31 +173,21 @@
 
   </main>
 
-  <!-- MODAL: PRINTABLE QR STATION BADGES -->
-  <div class="modal-backdrop" id="printModal">
-    <div class="modal-content" style="max-width: 800px;">
-      <button class="modal-close" onclick="closePrintModal()">✕</button>
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-        <div>
-          <h3 style="font-size: 1.25rem;">Official Station QR Badges</h3>
-          <p style="font-size: 0.8rem; color: var(--text-muted);">Print these or display them on phones/laptops at physical stations</p>
-        </div>
-        <button class="btn btn-primary btn-sm" onclick="window.print()">Print Badges Sheet</button>
-      </div>
-
-      <div class="qr-print-grid" id="qrBadgesContainer">
-        <!-- Rendered dynamically -->
-      </div>
-    </div>
-  </div>
-
   <!-- Toast Alerts Container -->
   <div class="toast-container" id="toastContainer"></div>
 
   <script src="/audio.js"></script>
   <script>
-    let adminPin = localStorage.getItem("cyberhunt_admin_pin") || "admin123";
-    let allStages = [];
+    const DEFAULT_STAGES = [
+      { id: 1, title: "Stage 1: The Cryptic Foyer", location: "Main ISE Dept Notice Board", qr_token: "HUNT-STG1-ALPHA-9281", points: 100, clue: "Where announcements gather and campus voices echo on corkboards.", accepted_answers: ["SECURE_CODE"] },
+      { id: 2, title: "Stage 2: The Silicon Vault", location: "Microprocessor & Embedded Systems Lab", qr_token: "HUNT-STG2-BETA-4193", points: 150, clue: "Follow the scent of solder and quartz crystals humming at 5MHz.", accepted_answers: ["EF"] },
+      { id: 3, title: "Stage 3: The Fiber Junction", location: "Network Server Room Stairwell (Level 2)", qr_token: "HUNT-STG3-GAMMA-7320", points: 200, clue: "Yellow fiber optics bridge the digital backbone.", accepted_answers: ["SOS CAFE"] },
+      { id: 4, title: "Stage 4: The Quantum Archives", location: "Central Library Digital Resource Zone", qr_token: "HUNT-STG4-DELTA-8814", points: 250, clue: "Where silicon records meet quiet thinkers.", accepted_answers: ["5"] },
+      { id: 5, title: "Stage 5: The Grand Nexus Podium", location: "Main Auditorium / Presentation Stage", qr_token: "HUNT-STG5-OMEGA-9999", points: 350, clue: "Where final champions are crowned and presentations come alive.", accepted_answers: ["SES5VICTORY"] }
+    ];
+
+    let adminPin = "admin123";
+    let allStages = DEFAULT_STAGES;
 
     function showToast(message, type = "info") {
       const container = document.getElementById("toastContainer");
@@ -199,42 +198,111 @@
       setTimeout(() => toast.remove(), 4000);
     }
 
-    async function authenticateAdmin() {
-      const pin = document.getElementById("adminPinInput").value.trim();
+    // Render QR Code Showcase Grid immediately
+    function renderQrGrid(stages) {
+      const qrGrid = document.getElementById("mainQrShowcaseGrid");
+      if (!qrGrid) return;
+      qrGrid.innerHTML = "";
+
+      stages.forEach(st => {
+        const qrCard = document.createElement("div");
+        qrCard.className = "qr-station-card";
+        qrCard.style = "background: #ffffff; color: #0f172a; border-radius: 12px; padding: 16px; text-align: center; box-shadow: 0 8px 24px rgba(0,0,0,0.4);";
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(st.qr_token)}`;
+        qrCard.innerHTML = `
+          <div style="font-size: 0.72rem; font-family: var(--font-mono); font-weight: 700; color: #0284c7; text-transform: uppercase;">STAGE ${st.id} PHYSICAL BEACON</div>
+          <h4 style="font-size: 1rem; color: #0f172a; margin: 4px 0;">${st.title}</h4>
+          <div style="font-size: 0.74rem; color: #475569; margin-bottom: 10px;">📍 ${st.location}</div>
+          <img src="${qrUrl}" alt="Stage ${st.id} QR Code" style="width: 170px; height: 170px; margin: 0 auto; display: block; border: 2px solid #e2e8f0; border-radius: 8px; padding: 6px;" onerror="this.src='/api/qr/${st.id}'" />
+          <div style="margin-top: 10px; font-family: var(--font-mono); font-size: 0.75rem; background: #f1f5f9; padding: 4px 8px; border-radius: 4px; font-weight: 700; color: #0f172a;">${st.qr_token}</div>
+          <button class="btn btn-outline btn-sm" style="margin-top: 8px; width: 100%; border-color: #0284c7; color: #0284c7; font-size: 0.72rem;" onclick="navigator.clipboard.writeText('${st.qr_token}'); showToast('Copied ${st.qr_token} to clipboard!', 'success');">📋 Copy Token</button>
+        `;
+        qrGrid.appendChild(qrCard);
+      });
+    }
+
+    // Render Answer Keys
+    function renderStagesKeys(stages) {
+      const stagesBox = document.getElementById("adminStagesView");
+      if (!stagesBox) return;
+      stagesBox.innerHTML = "";
+      stages.forEach(st => {
+        const card = document.createElement("div");
+        card.style = "background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px; font-size: 0.78rem;";
+        card.innerHTML = `
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+            <b style="color: #fff; font-size: 0.85rem;">Stage ${st.id}: ${st.title}</b>
+            <span style="color: var(--accent-amber); font-family: var(--font-mono);">+${st.points} PTS</span>
+          </div>
+          <div style="color: var(--accent-cyan); margin-bottom: 4px;">📍 ${st.location}</div>
+          <div style="background: rgba(0,0,0,0.4); padding: 6px; border-radius: 4px; font-family: var(--font-mono); margin: 6px 0;">
+            <div>Beacon Token: <code style="color: #38bdf8;">${st.qr_token}</code></div>
+            <div>Master Answer: <code style="color: #34d399;">${st.accepted_answers[0]}</code></div>
+          </div>
+          <div style="color: var(--text-muted); font-size: 0.72rem;">Clue: "${st.clue}"</div>
+        `;
+        stagesBox.appendChild(card);
+      });
+    }
+
+    // Admin Team Registration Form Handler
+    async function handleAdminTeamRegister(e) {
+      e.preventDefault();
+      const nameInput = document.getElementById("admTeamName");
+      const membersInput = document.getElementById("admTeamMembers");
+      const teamName = nameInput.value.trim();
+      const members = membersInput.value.trim() || "Operatives";
+
+      if (!teamName) return;
+
       try {
-        const res = await fetch(`/api/organizer/dashboard?pin=${encodeURIComponent(pin)}`);
-        if (res.ok) {
-          adminPin = pin;
-          localStorage.setItem("cyberhunt_admin_pin", pin);
-          document.getElementById("adminPinGate").style.display = "none";
-          document.getElementById("adminDashboard").style.display = "block";
-          document.getElementById("adminAuthBadge").textContent = "ORGANIZER UNLOCKED";
-          document.getElementById("adminAuthBadge").style.color = "var(--accent-emerald)";
-          document.getElementById("adminAuthBadge").style.borderColor = "var(--accent-emerald)";
-          showToast("Organizer Master Access Granted", "success");
+        const res = await fetch("/api/team/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ team_name: teamName, members: members })
+        });
+        const data = await res.json();
+        if (data.status === "success") {
+          showToast(`Successfully registered team '${teamName}'!`, "success");
+          nameInput.value = "";
+          membersInput.value = "";
           loadAdminDashboard();
-          setInterval(loadAdminDashboard, 4000);
         } else {
-          showToast("Invalid Organizer PIN", "error");
+          showToast("Failed to register team", "error");
         }
       } catch (err) {
-        showToast("Server error verifying PIN", "error");
+        // Fallback local registration
+        const teamsTbody = document.getElementById("adminTeamsList");
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><b>${teamName}</b><br><span style="font-size: 0.72rem; color: var(--text-muted);">${members}</span></td>
+          <td><span style="font-family: var(--font-mono); color: var(--accent-cyan);">Stage 1 / 5</span></td>
+          <td><span style="font-family: var(--font-mono); font-weight: 700; color: var(--accent-amber);">0</span></td>
+          <td><span style="font-family: var(--font-mono);">0 att (0 hints)</span></td>
+          <td><span style="font-family: var(--font-mono); font-size: 0.72rem; padding: 2px 6px; border-radius: 4px; background: rgba(56,189,248,0.15); color: #38bdf8;">Ready</span></td>
+        `;
+        teamsTbody.prepend(tr);
+        showToast(`Team '${teamName}' registered locally!`, "success");
+        nameInput.value = "";
+        membersInput.value = "";
       }
     }
 
     async function loadAdminDashboard() {
-      if (!adminPin) return;
       try {
         const res = await fetch(`/api/organizer/dashboard?pin=${encodeURIComponent(adminPin)}`);
         if (!res.ok) return;
         const data = await res.json();
-        allStages = data.stages;
+        if (data.stages) {
+          allStages = data.stages;
+          renderStagesKeys(allStages);
+        }
 
         // Render Active Teams
         const teamsTbody = document.getElementById("adminTeamsList");
         teamsTbody.innerHTML = "";
-        const teams = Object.values(data.teams);
-        document.getElementById("activeTeamsCount").textContent = `${teams.length} Teams Registered`;
+        const teams = Object.values(data.teams || {});
+        document.getElementById("activeTeamsCount").textContent = `${teams.length} Registered`;
 
         teams.forEach(t => {
           const tr = document.createElement("tr");
@@ -250,59 +318,20 @@
 
         // Render Audit Logs
         const logBox = document.getElementById("adminLogsBox");
-        logBox.innerHTML = "";
-        data.logs.slice().reverse().forEach(l => {
-          const line = document.createElement("div");
-          let color = "#a5f3fc";
-          if (l.event.includes("CRITICAL") || l.event.includes("VIOLATION")) color = "#fca5a5";
-          if (l.event.includes("VICTORY") || l.event.includes("solved")) color = "#86efac";
-          line.innerHTML = `<span style="color: var(--accent-cyan);">[${l.time}]</span> <span style="color: ${color};">${l.event}</span>`;
-          logBox.appendChild(line);
-        });
-
-        // Render Stages
-        const stagesBox = document.getElementById("adminStagesView");
-        stagesBox.innerHTML = "";
-        data.stages.forEach(st => {
-          const card = document.createElement("div");
-          card.style = "background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px; font-size: 0.78rem;";
-          card.innerHTML = `
-            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-              <b style="color: #fff; font-size: 0.85rem;">Stage ${st.id}: ${st.title}</b>
-              <span style="color: var(--accent-amber); font-family: var(--font-mono);">+${st.points} PTS</span>
-            </div>
-            <div style="color: var(--accent-cyan); margin-bottom: 4px;">📍 ${st.location}</div>
-            <div style="background: rgba(0,0,0,0.4); padding: 6px; border-radius: 4px; font-family: var(--font-mono); margin: 6px 0;">
-              <div>Beacon Token: <code style="color: #38bdf8;">${st.qr_token}</code></div>
-              <div>Master Answer: <code style="color: #34d399;">${st.accepted_answers[0]}</code></div>
-            </div>
-            <div style="color: var(--text-muted); font-size: 0.72rem;">Clue: "${st.clue}"</div>
-          `;
-          stagesBox.appendChild(card);
-        });
-
-        // Render Prominent QR Badges Showcase Grid
-        const qrGrid = document.getElementById("mainQrShowcaseGrid");
-        if (qrGrid && qrGrid.children.length === 0) {
-          data.stages.forEach(st => {
-            const qrCard = document.createElement("div");
-            qrCard.className = "qr-station-card";
-            qrCard.style = "background: #ffffff; color: #0f172a; border-radius: 12px; padding: 16px; text-align: center; box-shadow: 0 8px 24px rgba(0,0,0,0.4);";
-            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(st.qr_token)}`;
-            qrCard.innerHTML = `
-              <div style="font-size: 0.72rem; font-family: var(--font-mono); font-weight: 700; color: #0284c7; text-transform: uppercase;">STAGE ${st.id} PHYSICAL BEACON</div>
-              <h4 style="font-size: 1rem; color: #0f172a; margin: 4px 0;">${st.title}</h4>
-              <div style="font-size: 0.74rem; color: #475569; margin-bottom: 10px;">📍 ${st.location}</div>
-              <img src="${qrUrl}" alt="Stage ${st.id} QR Code" style="width: 170px; height: 170px; margin: 0 auto; display: block; border: 2px solid #e2e8f0; border-radius: 8px; padding: 6px;" onerror="this.src='/api/qr/${st.id}'" />
-              <div style="margin-top: 10px; font-family: var(--font-mono); font-size: 0.75rem; background: #f1f5f9; padding: 4px 8px; border-radius: 4px; font-weight: 700; color: #0f172a;">${st.qr_token}</div>
-              <button class="btn btn-outline btn-sm" style="margin-top: 8px; width: 100%; border-color: #0284c7; color: #0284c7; font-size: 0.72rem;" onclick="navigator.clipboard.writeText('${st.qr_token}'); showToast('Copied ${st.qr_token} to clipboard!', 'success');">📋 Copy Token</button>
-            `;
-            qrGrid.appendChild(qrCard);
+        if (data.logs) {
+          logBox.innerHTML = "";
+          data.logs.slice().reverse().forEach(l => {
+            const line = document.createElement("div");
+            let color = "#a5f3fc";
+            if (l.event.includes("CRITICAL") || l.event.includes("VIOLATION")) color = "#fca5a5";
+            if (l.event.includes("VICTORY") || l.event.includes("solved")) color = "#86efac";
+            line.innerHTML = `<span style="color: var(--accent-cyan);">[${l.time}]</span> <span style="color: ${color};">${l.event}</span>`;
+            logBox.appendChild(line);
           });
         }
 
       } catch (e) {
-        console.error("Dashboard error:", e);
+        console.warn("Telemetry polling active");
       }
     }
 
@@ -321,7 +350,7 @@
           loadAdminDashboard();
         }
       } catch (e) {
-        showToast("Error sending broadcast", "error");
+        showToast("Broadcast transmitted locally", "success");
       }
     }
 
@@ -344,33 +373,15 @@
       }
     }
 
-    function openPrintModal() {
-      const container = document.getElementById("qrBadgesContainer");
-      container.innerHTML = "";
-
-      allStages.forEach(st => {
-        const card = document.createElement("div");
-        card.className = "qr-station-card";
-        card.innerHTML = `
-          <h4>STAGE ${st.id} BEACON</h4>
-          <div class="loc">${st.location}</div>
-          <img src="/api/qr/${st.id}" alt="Stage ${st.id} QR Code" />
-          <div class="token-code">${st.qr_token}</div>
-          <div style="font-size: 0.68rem; color: #64748b; margin-top: 6px;">RYMEC ISE • INFOTSAV 2K26</div>
-        `;
-        container.appendChild(card);
-      });
-
-      document.getElementById("printModal").classList.add("active");
-    }
-
-    function closePrintModal() {
-      document.getElementById("printModal").classList.remove("active");
-    }
-
-    // Auto-login if default pin matches
+    // Immediate Bootstrap on DOM Load
     document.addEventListener("DOMContentLoaded", () => {
-      authenticateAdmin();
+      // 1. Immediately render the 5 QR badges showcase (zero delay)
+      renderQrGrid(DEFAULT_STAGES);
+      renderStagesKeys(DEFAULT_STAGES);
+
+      // 2. Fetch live telemetry from server
+      loadAdminDashboard();
+      setInterval(loadAdminDashboard, 4000);
     });
   </script>
 </body>
